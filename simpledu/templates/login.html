@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% from "macros.html" import render_form %}
+{%block title %}Home{% endblock %}
+{% block css %}
+     <link rel='stylesheet' href="{{ url_for('static', filename='login.css') }}">
+{% endblock %}
+{%block body %}
+    <div class="login">
+     <h2>在线直播登录</h2>
+      {{ render_form(form,url_for('front.login')) }}
+    </div>
+{% endblock %}
