@@ -1,9 +1,11 @@
 from datetime import datetime
+
+from flask import url_for
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 # 注意这里不再传入 app 了
-db = SQLAlchemy()
+from .exts import db
 
 
 class BaseModel(db.Model):
@@ -12,7 +14,7 @@ class BaseModel(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
-class User(BaseModel,UserMixin):
+class User(BaseModel, UserMixin):
     __tablename__ = 'user'
     ROLE_USER = 10
     ROLE_STAFF = 20
@@ -52,20 +54,27 @@ class Course(BaseModel):
     name = db.Column(db.String(128), unique=True, index=True, nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
     author = db.relationship('User', uselist=False)
-    description=db.Column(db.Text)
-    image_url=db.Column(db.String(256))
-    chapters=db.relationship("Chapter")
+    description = db.Column(db.Text)
+    image_url = db.Column(db.String(256))
+    chapters = db.relationship("Chapter")
+
     def __repr__(self):
         return self.name
 
+    @property
+    def url(self):
+        return url_for('course.detail', id=self.id)
+
+
 class Chapter(BaseModel):
     __tablename__ = 'chapter'
-    id=db.Column(db.Integer,primary_key=True)
-    name=db.Column(db.String(128),unique=True,index=True)
-    description=db.Column(db.Text)
-    video_url=db.Column(db.String(256))
-    video_duration=db.Column(db.String(24))
-    course_id=db.Column(db.Integer,db.ForeignKey("course.id",ondelete="CASCADE"))
-    course=db.relationship("Course")
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), unique=True, index=True)
+    description = db.Column(db.Text)
+    video_url = db.Column(db.String(256))
+    video_duration = db.Column(db.String(24))
+    course_id = db.Column(db.Integer, db.ForeignKey("course.id", ondelete="CASCADE"))
+    course = db.relationship("Course")
+
     def __repr__(self):
-        return  self.name
+        return self.name

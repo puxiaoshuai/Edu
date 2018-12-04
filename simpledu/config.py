@@ -21,4 +21,5 @@ configs = {
     'production': ProductionConfig,
     'testing': TestingConfig
 }
+PAGE_SIZE=9
 

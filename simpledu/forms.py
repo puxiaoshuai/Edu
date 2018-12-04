@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, ValidationError
 from wtforms.validators import Length, Email, EqualTo, DataRequired
-from simpledu.models import db, User
+from simpledu.models import  User
+from  .exts import db
 
 
 class RegistForm(FlaskForm):

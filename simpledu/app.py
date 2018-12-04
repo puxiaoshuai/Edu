@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 from simpledu.config import configs
-from simpledu.models import db, Course, User
+from simpledu.models import  Course, User
+from .exts import db
 from flask_migrate import Migrate
 from flask_login import LoginManager
 
