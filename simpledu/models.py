@@ -39,7 +39,7 @@ class User(BaseModel, UserMixin):
         return check_password_hash(self.__password, pwd)
 
     @property
-    def is_admiin(self):
+    def is_admin(self):
         return self.role == self.ROLE_ADMIN
 
     @property
@@ -78,3 +78,7 @@ class Chapter(BaseModel):
 
     def __repr__(self):
         return self.name
+
+    @property
+    def url(self):
+        return url_for('course.chapter', course_id=self.course.id, chapter_id=self.id)

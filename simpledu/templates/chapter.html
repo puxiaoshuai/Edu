@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{%block title %}{{ chapter.name }}{% endblock %}
+{% block css %}
+<!-- 引入 video-js.css CDN 文件 -->
+<link href="http://vjs.zencdn.net/6.2.7/video-js.css" rel="stylesheet">
+    <script src="http://vjs.zencdn.net/6.2.8/video.js"></script>
+{% endblock %}
+{%block body %}
+ <!-- 视频要用 video 标签包裹 -->
+    <h2>{{ chapter.name }}</h2>
+<video class="video-js vjs-16-9 vjs-big-play-centered" data-setup='{"fluid":true, "controls": true}'>
+  <!-- 视频地址放入source 中，并设置好视频的类型 -->
+  <source src="{{ chapter.video_url }}" type='video/mp4'>
+</video>
+
+{% endblock %}
