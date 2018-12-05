@@ -1,8 +1,9 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, ValidationError, TextAreaField, IntegerField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, ValidationError, TextAreaField, IntegerField, \
+    SelectField
 from wtforms.validators import Length, Email, EqualTo, DataRequired, URL, NumberRange
 from simpledu.models import User, Course
-from  .exts import db
+from .exts import db
 
 
 class RegistForm(FlaskForm):
@@ -18,7 +19,6 @@ class RegistForm(FlaskForm):
             raise ValidationError("用户名只能包含数字和英文")
         elif User.query.filter_by(username=field.data).first():
             raise ValidationError("用户名已存在")
-
 
     def validate_email(self, filed):
         if User.query.filter_by(email=filed.data).first():
@@ -36,7 +36,7 @@ class RegistForm(FlaskForm):
 
 class LoginForm(FlaskForm):
     # email = StringField('邮箱', validators=[DataRequired("邮箱不能为空"), Email()])
-    username = StringField('Username', validators=[DataRequired("用名密码不能为空"), Length(3, 24,message="长度3-24位")])
+    username = StringField('Username', validators=[DataRequired("用名密码不能为空"), Length(3, 24, message="长度3-24位")])
     password = PasswordField('密码', validators=[DataRequired(message="密码不能为空"), Length(6, 24, message="密码长度6-24位")])
     remember_me = BooleanField('记住我')
     submit = SubmitField('提交')
@@ -45,11 +45,11 @@ class LoginForm(FlaskForm):
         if not User.query.filter_by(username=field.data).first():
             raise ValidationError("用户名没注册")
 
-
     def validate_password(self, filed):
         user = User.query.filter_by(username=self.username.data).first()
         if user and not user.check_pwd(filed.data):
             raise ValidationError("密码不正确")
+
 
 class CourseForm(FlaskForm):
     name = StringField('课程名称', validators=[DataRequired(), Length(5, 32)])
@@ -75,3 +75,34 @@ class CourseForm(FlaskForm):
         db.session.add(course)
         db.session.commit()
         return course
+
+
+class AddUserForm(FlaskForm):
+
+    username = StringField("用户名", validators=[DataRequired(), Length(3, 10)])
+    password = PasswordField('密码', validators=[DataRequired(message="密码不能为空"), Length(6, 24)])
+    email = StringField("邮箱", validators=[DataRequired(), Email()])
+    job = StringField("工作")
+    role = SelectField("权限",
+                       coerce=int,
+                       choices=[(10, "普通用户"), (20, "职工"), (30, "超级管理员")]
+                       , default=1
+                       )
+    submit = SubmitField('提交')
+
+    def add_user(self):
+        user = User()
+        self.populate_obj(user)
+        db.session.add(user)
+        db.session.commit()
+        return user
+
+    def edit_user(self, user):
+        self.populate_obj(user)
+        db.session.add(user)
+        db.session.commit()
+        return user
+
+    def validate_email(self, filed):
+        if User.query.filter_by(email=filed.data).first():
+            raise ValidationError("邮箱已经存在")
