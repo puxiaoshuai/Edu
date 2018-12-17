@@ -1,0 +1,32 @@
+{% extends 'admin/index.html' %}
+{% from 'macros.html' import render_pagination %}
+{% block title %}
+直播管理
+{% endblock %}
+{% block operation %}
+     <a href="{{ url_for('admin.add_zhibo') }}" type="button" class="btn btn-primary">
+  <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+  添加直播
+</a>
+{% endblock %}
+{% block admin %}
+    <table class="table">
+       <tr>
+           <th>ID</th>
+           <th>名称</th>
+           <th>用户</th>
+
+       </tr>
+    <tbody>
+    {% for live in pagination.items %}
+      <tr>
+        <td>{{ live.id }}</td>
+        <td>{{ live.name }}</td>
+        <td>{{ live.user.username }}</td>
+
+      </tr>
+      {% endfor %}
+    </tbody>
+    </table>
+{{ render_pagination(pagination, 'admin.zhibo') }}
+{% endblock %}

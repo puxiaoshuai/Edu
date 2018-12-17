@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, ValidationError, TextAreaField, IntegerField, \
     SelectField
 from wtforms.validators import Length, Email, EqualTo, DataRequired, URL, NumberRange
-from simpledu.models import User, Course
+from simpledu.models import User, Course, LiveBean
 from .exts import db
 
 
@@ -77,8 +77,20 @@ class CourseForm(FlaskForm):
         return course
 
 
-class AddUserForm(FlaskForm):
+class LiveUserForm(FlaskForm):
+    name = StringField("直播名称", validators=[DataRequired(message="请输入直播名称")])
+    user_id = IntegerField("用户id", validators=[DataRequired(message="请输入用户id")])
+    submit = SubmitField("提交")
 
+    def add_live(self):
+        live = LiveBean()
+        self.populate_obj(live)
+        db.session.add(live)
+        db.session.commit()
+        return  live
+
+
+class AddUserForm(FlaskForm):
     username = StringField("用户名", validators=[DataRequired(), Length(3, 10)])
     password = PasswordField('密码', validators=[DataRequired(message="密码不能为空"), Length(6, 24)])
     email = StringField("邮箱", validators=[DataRequired(), Email()])

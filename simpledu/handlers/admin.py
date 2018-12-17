@@ -3,8 +3,8 @@ from simpledu.decorators import admin_required
 from flask_login import current_user
 
 from simpledu.exts import db
-from simpledu.models import Course, User
-from simpledu.forms import CourseForm, AddUserForm
+from simpledu.models import Course, User,LiveBean
+from simpledu.forms import CourseForm, AddUserForm, LiveUserForm
 
 admin = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -25,6 +25,29 @@ def courses():
         error_out=False
     )
     return render_template('admin/courses.html', pagination=pagination)
+
+
+@admin.route("/zhibo/")
+@admin_required
+def zhibo():
+    page=request.args.get("page",default=1,type=int)
+    pagination=LiveBean.query.paginate(
+        page=page,
+        per_page=9,
+        error_out=False
+    )
+    return render_template('admin/zhibolist.html',pagination=pagination)
+
+
+@admin.route("/add_zhibo/",methods=["GET","POST"])
+@admin_required
+def add_zhibo():
+    form = LiveUserForm()
+    if form.validate_on_submit():
+        form.add_live()
+        flash("创建成功", 'success')
+        return redirect(url_for('admin.zhibo'))
+    return render_template('admin/addzhibo.html',form=form)
 
 
 @admin.route("/courses/create/", methods=["GET", 'POST'])
@@ -72,7 +95,7 @@ def users():
     return render_template('admin/users.html', pagination=pagination)
 
 
-@admin.route('/users/add',methods=["GET", 'POST'])
+@admin.route('/users/add', methods=["GET", 'POST'])
 @admin_required
 def add_user():
     form = AddUserForm()
@@ -83,7 +106,7 @@ def add_user():
     return render_template('admin/add_user.html', form=form)
 
 
-@admin.route('/users/<int:user_id>/edit',methods=['GET',"POST"])
+@admin.route('/users/<int:user_id>/edit', methods=['GET', "POST"])
 @admin_required
 def edit_user(user_id):
     user = User.query.get_or_404(user_id)

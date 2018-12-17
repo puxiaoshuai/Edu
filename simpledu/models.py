@@ -82,3 +82,12 @@ class Chapter(BaseModel):
     @property
     def url(self):
         return url_for('course.chapter', course_id=self.course.id, chapter_id=self.id)
+
+
+class LiveBean(BaseModel):
+    __tablename__ = 'live'
+    name = db.Column(db.String(128), unique=True, index=True)
+    id=db.Column(db.Integer,primary_key=True,autoincrement=True)
+    user_id=db.Column(db.Integer,db.ForeignKey('user.id'))
+    user=db.relationship("User",backref="live")
+

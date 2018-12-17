@@ -6,10 +6,11 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 
 def register_blueprints(app):
-    from .handlers import front, course, admin
+    from .handlers import front, course, admin,live
     app.register_blueprint(front)
     app.register_blueprint(course)
     app.register_blueprint(admin)
+    app.register_blueprint(live)
 
 
 # 注册 flask-login 首先需要实例化一个 LoginManager 对象，
